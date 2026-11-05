@@ -1,0 +1,10 @@
+# Raw competition data (downloaded automatically by src/data_loader.py)
+netflix_competition/data/
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.vscode/
+.idea/

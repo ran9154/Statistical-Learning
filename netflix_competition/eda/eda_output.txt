@@ -1,0 +1,185 @@
+
+==============================================================================
+1. Shapes & sanity checks
+==============================================================================
+X_train (10000, 99)  X_test (2931, 99)  y_train (10000,)  y_date_train (10000,)  y_date_test (2931,)
+Movie release years: 1981 - 2004
+Missing ratings in first 14 movies (train/test): 0 / 0
+Rating missing <=> date missing? train: True  test: True
+Missing target ratings / dates: 0 0 0
+Rating values present: [np.float64(1.0), np.float64(2.0), np.float64(3.0), np.float64(4.0), np.float64(5.0)]
+
+The 14 fully-observed movies:
+    year                                                   title
+0   1996                                        Independence Day
+1   2000                                             The Patriot
+2   2004                                  The Day After Tomorrow
+3   2003  Pirates of the Caribbean: The Curse of the Black Pearl
+4   1990                                            Pretty Woman
+5   1994                                            Forrest Gump
+6   1999                                          The Green Mile
+7   1997                                                 Con Air
+8   1996                                                 Twister
+9   2002                                      Sweet Home Alabama
+10  2001                                            Pearl Harbor
+11  1998                                              Armageddon
+12  1996                                                The Rock
+13  2000                                         What Women Want
+
+==============================================================================
+2. Target: rating of 'Miss Congeniality'
+==============================================================================
+     count    pct
+y                
+1.0    213   2.13
+2.0    865   8.65
+3.0   3378  33.78
+4.0   3648  36.48
+5.0   1896  18.96
+mean=3.6149  std=0.9575
+Naive RMSE (predict the train mean for everyone) = 0.9575
+Benchmarks: linear regression=0.7769, bonus<0.76, double bonus<0.745
+
+==============================================================================
+3. Missingness
+==============================================================================
+Fraction missing per movie (sorted, most-missing first, top 15):
+                                 year  miss_train  miss_test
+title                                                       
+Sideways                         2004       0.470      0.477
+Napoleon Dynamite                2004       0.430      0.428
+The Royal Tenenbaums             2001       0.378      0.383
+Lost in Translation              2003       0.376      0.384
+Memento                          2000       0.374      0.375
+Kill Bill: Vol. 2                2004       0.343      0.338
+The Notebook                     2004       0.337      0.336
+Big Fish                         2003       0.318      0.316
+Fight Club                       1999       0.297      0.292
+The School of Rock               2003       0.282      0.293
+Dodgeball A True Underdog Story  2004       0.278      0.285
+Kill Bill: Vol. 1                2003       0.260      0.257
+Mystic River                     2003       0.240      0.257
+The Incredibles                  2004       0.238      0.236
+Somethings Gotta Give            2003       0.231      0.241
+
+#movies rated per user: train mean=83.8 median=86 min=28 max=99
+                        test  mean=83.5 median=86 min=32 max=99
+Overall missing rate (85 optional movies): train 0.179, test 0.183
+
+Is *missingness* informative? Mean target when movie is rated vs. missing
+                     frac_missing  y|rated  y|missing  corr(missing,y)
+title                                                                 
+Sister Act                  0.173    3.687      3.267           -0.166
+Maid in Manhattan           0.195    3.693      3.294           -0.165
+Two Weeks Notice            0.128    3.674      3.212           -0.161
+Memento                     0.374    3.496      3.813            0.160
+Fight Club                  0.297    3.521      3.836            0.150
+Pulp Fiction                0.214    3.545      3.872            0.140
+The Wedding Planner         0.132    3.665      3.283           -0.135
+Lost in Translation         0.376    3.518      3.776            0.131
+Sideways                    0.470    3.498      3.746            0.129
+Kill Bill: Vol. 2           0.343    3.529      3.780            0.124
+American Beauty             0.205    3.555      3.849            0.124
+Kill Bill: Vol. 1           0.260    3.548      3.804            0.117
+Dirty Dancing               0.124    3.653      3.344           -0.107
+Mystic River                0.240    3.562      3.783            0.099
+Big Fish                    0.318    3.552      3.750            0.097
+corr(#movies rated, y) = -0.0634
+
+==============================================================================
+4. Movie-level stats & correlation with the target
+==============================================================================
+Top 20 movies by correlation with the target (computed on users who rated both):
+                              year  n_rated   mean    std  corr_with_y
+title                                                                 
+The Wedding Planner           2001     8678  3.360  0.992        0.434
+Two Weeks Notice              2002     8719  3.518  0.918        0.422
+Sweet Home Alabama            2002    10000  3.675  0.967        0.412
+Maid in Manhattan             2002     8050  3.231  1.022        0.378
+How to Lose a Guy in 10 Days  2003     8839  3.761  0.953        0.369
+Sister Act                    1992     8274  3.374  0.997        0.365
+What Women Want               2000    10000  3.706  0.917        0.347
+Double Jeopardy               1999     8308  3.772  0.869        0.334
+Pretty Woman                  1990    10000  4.075  0.879        0.332
+Dirty Dancing                 1987     8758  3.792  1.020        0.317
+National Treasure             2004     8148  4.098  0.867        0.296
+Erin Brockovich               2000     8690  3.956  0.868        0.295
+Twister                       1996    10000  3.755  0.911        0.293
+Tomb Raider                   2001     8342  3.407  1.014        0.283
+Ghost                         1990     8857  3.919  0.921        0.279
+50 First Dates                2004     8675  3.986  0.874        0.276
+Entrapment                    1999     8274  3.558  0.880        0.274
+Pearl Harbor                  2001    10000  3.732  1.030        0.264
+Con Air                       1997    10000  3.729  0.900        0.264
+Men of Honor                  2000     8728  3.973  0.871        0.263
+
+Bottom 5:
+                      year  n_rated   mean    std  corr_with_y
+title                                                         
+Pulp Fiction          1994     7856  3.841  1.182       -0.139
+The Royal Tenenbaums  2001     6218  2.728  1.194       -0.104
+Lost in Translation   2003     6241  2.869  1.215       -0.096
+Sideways              2004     5298  3.239  1.102       -0.087
+American Beauty       1999     7954  3.708  1.086       -0.082
+
+First 14 (fully observed) movies:
+                                                        year  n_rated   mean    std  corr_with_y
+title                                                                                           
+Independence Day                                        1996    10000  4.146  0.806        0.242
+The Patriot                                             2000    10000  4.107  0.886        0.178
+The Day After Tomorrow                                  2004    10000  3.704  0.965        0.259
+Pirates of the Caribbean: The Curse of the Black Pearl  2003    10000  4.348  0.798        0.184
+Pretty Woman                                            1990    10000  4.075  0.879        0.332
+Forrest Gump                                            1994    10000  4.514  0.722        0.057
+The Green Mile                                          1999    10000  4.456  0.742        0.157
+Con Air                                                 1997    10000  3.729  0.900        0.264
+Twister                                                 1996    10000  3.755  0.911        0.293
+Sweet Home Alabama                                      2002    10000  3.675  0.967        0.412
+Pearl Harbor                                            2001    10000  3.732  1.030        0.264
+Armageddon                                              1998    10000  4.018  0.889        0.262
+The Rock                                                1996    10000  4.017  0.828        0.195
+What Women Want                                         2000    10000  3.706  0.917        0.347
+
+==============================================================================
+5. User-level features
+==============================================================================
+corr(user mean (all rated), y) = 0.4077
+corr(user mean (first 14), y) = 0.4621
+corr(user std, y) = -0.1606
+
+==============================================================================
+6. Dates
+==============================================================================
+Target-rating date (train): 2000-02-03 -> 2005-01-25
+Target-rating date (test):  2000-06-01 -> 2005-01-24
+All movie-rating dates (train): 1998-12-08 -> 2005-01-26
+corr(target date, y) = 0.0449
+corr(y_date, y) = 0.0449   (median=2394.0)
+corr(days_since_first_rating, y) = -0.0219   (median=5.0)
+corr(days_until_last_rating, y) = -0.0419   (median=424.0)
+corr(user_activity_span, y) = -0.0457   (median=509.0)
+corr(n_same_day_as_y, y) = 0.0243   (median=16.0)
+corr(frac_rated_before_y, y) = -0.0247   (median=0.0)
+Fraction of users who rated Miss Congeniality on the SAME day as >=1 other movie: 0.931
+
+For the top-5 correlated movies: corr with y when rated same day vs other days
+  The Wedding Planner                      same-day n= 4319 r=0.468 | other n= 4359 r=0.396
+  Two Weeks Notice                         same-day n= 2200 r=0.436 | other n= 6519 r=0.414
+  Sweet Home Alabama                       same-day n= 3689 r=0.479 | other n= 6311 r=0.365
+  Maid in Manhattan                        same-day n= 2211 r=0.401 | other n= 5839 r=0.368
+  How to Lose a Guy in 10 Days             same-day n= 2106 r=0.408 | other n= 6733 r=0.354
+
+==============================================================================
+7. Movie release year
+==============================================================================
+corr(release year, movie mean rating) = -0.2938
+corr(release year, corr_with_y)       = 0.0227
+corr(release year, fraction missing)  = 0.2711
+
+==============================================================================
+8. Train vs. test comparison
+==============================================================================
+Max |diff| in per-movie mean rating:  0.060
+Max |diff| in per-movie missing rate: 0.019
+User-mean rating: train 3.929  test 3.932
+Target date mean: train 2303.7  test 2309.8
